@@ -12,12 +12,13 @@ import { ProductCard } from "@/components/storefront/product-card";
 import type { Product } from "@/lib/products";
 
 type ProductCatalogProps = {
+  initialCategory?: string;
   products: Product[];
 };
 
-export function ProductCatalog({ products }: ProductCatalogProps) {
+export function ProductCatalog({ initialCategory = "all", products }: ProductCatalogProps) {
   const [query, setQuery] = useState("");
-  const [category, setCategory] = useState("all");
+  const [category, setCategory] = useState(initialCategory);
   const [sort, setSort] = useState<SortValue>("featured");
 
   const categories = useMemo(() => getCategoryCards(products), [products]);
@@ -25,11 +26,13 @@ export function ProductCatalog({ products }: ProductCatalogProps) {
     () => ["all", ...categories.map((item) => item.name)],
     [categories]
   );
+  const selectedCategory = categoryOptions.includes(category) ? category : "all";
 
   const filteredProducts = useMemo(() => {
     const normalizedQuery = query.trim().toLowerCase();
     const visibleProducts = products.filter((product) => {
-      const matchesCategory = category === "all" || product.category === category;
+      const matchesCategory =
+        selectedCategory === "all" || product.category === selectedCategory;
       const matchesQuery =
         normalizedQuery.length === 0 ||
         product.title.toLowerCase().includes(normalizedQuery) ||
@@ -56,9 +59,10 @@ export function ProductCatalog({ products }: ProductCatalogProps) {
           return second.discountPercentage - first.discountPercentage;
       }
     });
-  }, [category, products, query, sort]);
+  }, [products, query, selectedCategory, sort]);
 
-  const hasActiveFilters = query.length > 0 || category !== "all" || sort !== "featured";
+  const hasActiveFilters =
+    query.length > 0 || selectedCategory !== "all" || sort !== "featured";
 
   return (
     <section className="space-y-4">
@@ -76,7 +80,7 @@ export function ProductCatalog({ products }: ProductCatalogProps) {
             Free delivery over $50
           </div>
           <MobileCatalogFilters
-            category={category}
+            category={selectedCategory}
             categoryOptions={categoryOptions}
             hasActiveFilters={hasActiveFilters}
             query={query}
@@ -89,7 +93,7 @@ export function ProductCatalog({ products }: ProductCatalogProps) {
 
         <div className="flex gap-2 overflow-x-auto pb-1">
           <CategoryCard
-            active={category === "all"}
+            active={selectedCategory === "all"}
             count={products.length}
             image={products[0]?.thumbnail}
             label="All products"
@@ -98,7 +102,7 @@ export function ProductCatalog({ products }: ProductCatalogProps) {
           {categories.map((item) => (
             <CategoryCard
               key={item.name}
-              active={category === item.name}
+              active={selectedCategory === item.name}
               count={item.count}
               image={item.image}
               label={formatLabel(item.name)}
@@ -108,7 +112,7 @@ export function ProductCatalog({ products }: ProductCatalogProps) {
         </div>
 
         <DesktopCatalogFilters
-          category={category}
+          category={selectedCategory}
           categoryOptions={categoryOptions}
           hasActiveFilters={hasActiveFilters}
           query={query}

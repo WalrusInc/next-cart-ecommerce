@@ -1,5 +1,8 @@
+"use client";
+
 import Image from "next/image";
 import { Heart, ShoppingCart, Star } from "lucide-react";
+import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -13,9 +16,7 @@ type ProductCardProps = {
 export function ProductCard({ product }: ProductCardProps) {
   const originalPrice = product.price / (1 - product.discountPercentage / 100);
   const { addToCart } = useCart();
-  console.log('product', product);
-  console.log('discount', product.discountPercentage);
-  console.log('discount type:', typeof product.discountPercentage);
+
   return (
     <article className="group overflow-hidden rounded-2xl border border-white/80 bg-white/95 shadow-sm shadow-emerald-100/50 ring-1 ring-emerald-100/70 transition duration-200 hover:-translate-y-1 hover:shadow-xl hover:shadow-emerald-100/80">
       <div className="relative aspect-square bg-gradient-to-br from-teal-50 via-white to-amber-50">
@@ -27,13 +28,15 @@ export function ProductCard({ product }: ProductCardProps) {
             Out of stock
           </Badge>
         )}
-        <Image
-          src={product.thumbnail}
-          alt={product.title}
-          fill
-          sizes="(min-width: 1280px) 220px, (min-width: 768px) 25vw, 50vw"
-          className="object-contain p-4 transition group-hover:scale-105"
-        />
+        <Link href={`/products/${product.id}`} aria-label={`View ${product.title}`}>
+          <Image
+            src={product.thumbnail}
+            alt={product.title}
+            fill
+            sizes="(min-width: 1280px) 220px, (min-width: 768px) 25vw, 50vw"
+            className="object-contain p-4 transition group-hover:scale-105"
+          />
+        </Link>
         <button
           type="button"
           aria-label={`Add ${product.title} to wishlist`}
@@ -50,9 +53,12 @@ export function ProductCard({ product }: ProductCardProps) {
 
       <div className="space-y-3 p-3.5">
         <div className="min-h-12">
-          <p className="line-clamp-2 text-sm font-medium leading-6">
+          <Link
+            href={`/products/${product.id}`}
+            className="line-clamp-2 text-sm font-medium leading-6 hover:text-emerald-700"
+          >
             {product.title}
-          </p>
+          </Link>
           <p className="mt-1 truncate text-xs capitalize text-neutral-500">
             {product.brand ?? product.category}
           </p>

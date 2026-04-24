@@ -1,4 +1,4 @@
-import { ProductCatalog } from "@/components/storefront/product-catalog";
+import { CategoryCards } from "@/components/storefront/category-cards";
 import { ProductSpotlight } from "@/components/storefront/product-spotlight";
 import { StorefrontShell } from "@/components/storefront/storefront-shell";
 import { getStorefrontData } from "@/lib/products";
@@ -12,7 +12,7 @@ export default async function Home() {
     <StorefrontShell>
       <div className="space-y-6">
         <ProductSpotlight product={data.featuredProduct} />
-        <ProductCatalog products={data.products} />
+        <CategoryCards products={data.products} />
       </div>
     </StorefrontShell>
   );

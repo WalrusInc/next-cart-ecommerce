@@ -113,6 +113,31 @@ export async function getStorefrontData(): Promise<StorefrontData> {
   };
 }
 
+export async function getProductById(id: number): Promise<Product | null> {
+  const fallbackProduct = [
+    ...fallbackProducts,
+    ...fallbackSmartphones,
+  ].find((product) => product.id === id);
+
+  try {
+    const response = await fetch(`${apiUrl}/products/${id}`, { cache: "no-store" });
+
+    if (!response.ok) {
+      throw new Error(`DummyJSON returned ${response.status}`);
+    }
+
+    const data: unknown = await response.json();
+
+    if (!isProduct(data)) {
+      throw new Error("DummyJSON returned an unexpected product shape");
+    }
+
+    return data;
+  } catch {
+    return fallbackProduct ?? null;
+  }
+}
+
 async function getProducts(url: string, fallback: Product[]): Promise<Product[]> {
   try {
     const response = await fetch(url, { cache: "no-store" });

@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { ShieldCheck, Star, Truck } from "lucide-react";
+import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
 import type { Product } from "@/lib/products";
@@ -61,11 +62,12 @@ export function ProductSpotlight({ product }: ProductSpotlightProps) {
             Add to cart
           </Button>
           <Button
+            asChild
             variant="outline"
             size="sm"
             className="hidden rounded-full border-emerald-100 bg-white/80 hover:bg-emerald-50 md:inline-flex"
           >
-            Buy now
+            <Link href={`/products/${product.id}`}>View details</Link>
           </Button>
         </div>
       </div>
